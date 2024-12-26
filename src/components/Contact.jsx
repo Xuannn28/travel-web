@@ -1,15 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from "framer-motion";
 
 const Contact = () => {
-const [result, setResult] = React.useState("");
+
+  const [result, setResult] = React.useState("");
 
   const onSubmit = async (event) => {
     event.preventDefault();
     setResult("Sending....");  // show Sending... when form is submitted
     const formData = new FormData(event.target);
 
-    formData.append("access_key", "254e8c1d-b678-4946-919f-7d56dd2d5cd7");
+    formData.append("access_key", import.meta.env.VITE_WEB3FORM_KEY);
 
     const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
