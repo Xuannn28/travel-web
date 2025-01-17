@@ -4,8 +4,23 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { motion } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 
 const Destinations = () => {
+
+  const navigate = useNavigate();
+
+  // function to navigate to plan journey page
+  const handlePlanJourney = () => {
+    navigate('/plan-journey');
+    window.scrollTo({
+      top: 0,
+      behavior:'smooth'
+    })
+  }
+
+
+  // sliding card settings
   const settings = {
     dots: true,
     infinite: true,
@@ -81,10 +96,9 @@ const Destinations = () => {
         
         {/* Plan journey button */}
         <div className='flex flex-col mt-16 sm:flex-row gap-4 justify-center items-center'>
-                <a href='#PlanJourney' className='border border-white text-white px-8 py-3 rounded-full hover:bg-slate-100 hover:text-slate-700'>
+                <button onClick={handlePlanJourney} className='border border-white text-white px-8 py-3 rounded-full hover:bg-slate-100 hover:text-slate-700'>
                     Plan Your Journey
-                </a>
-                
+                </button>
         </div>
 
     </div>

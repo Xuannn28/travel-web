@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { assets } from '../assets/assets'
 
 const Nav = () => {
+    // react hook with boolean initialisation
     const [showMobileMenu, setShowMobileMenu] = useState(false)
 
     // prevent website from scrolling when shoeMobileMenu is true
@@ -15,6 +16,7 @@ const Nav = () => {
         document.body.style.overflow = 'auto'
       }
     }, [showMobileMenu])
+
     
   return (
     <div className='absolute top-0 left-0 w-full z-20'>
@@ -23,10 +25,10 @@ const Nav = () => {
             <img src={assets.logo} alt='logo' width={100} height={100} className='object-contain'/>
 
             <ul className='hidden md:flex gap-8 text-black font-semibold font-sans'>
-                <a href="#Header" className='cursor-pointer hover:text-gray-400'>Home</a>
-                <a href="#About" className='cursor-pointer hover:text-gray-400'>About</a>
-                <a href="#Destinations" className='cursor-pointer hover:text-gray-400'>Destinations</a>
-                <a href="#Testimonials" className='cursor-pointer hover:text-gray-400'>Testimonials</a>
+                <a href='#Header'  className='cursor-pointer hover:text-gray-400'>Home</a>
+                <a href='#About' className='cursor-pointer hover:text-gray-400'>About</a>
+                <a href='#Destinations' className='cursor-pointer hover:text-gray-400'>Destinations</a>
+                <a href='#Testimonials' className='cursor-pointer hover:text-gray-400'>Testimonials</a>
             </ul>
             
             <button className='hidden md:block bg-white px-6 py-2 rounded-full'>

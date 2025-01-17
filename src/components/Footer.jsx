@@ -1,16 +1,24 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
+
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0
+        })
+    }
+
   return (
     <div className='w-full bg-gray-800 text-white mx-auto'>
         <div className='z-10 relative grid grid-cols-1 lg:grid-cols-3 p-10 md:p-15 gap-5'>
 
             <div>
                 <div className='flex flex-row gap-5'>
-                    <a href='#Header' className='cursor-pointer'>
+                    <Link to='/' onClick={scrollToTop} className='cursor-pointer'>
                         <img src={assets.logo} alt='logo' width={60} height={60} className='object-contain'/>
-                    </a>
+                    </Link>
                     <h3 className='mt-3 text-white font-bold font-sans'>
                         Malaysia Adventure
                     </h3>
