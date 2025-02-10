@@ -1,18 +1,44 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { assets } from '../assets/assets'
 import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { data } from '../assets/planJourneyData'
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import AuthService from '../services/auth.service';
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import UserService from '../services/user.service';
 
+// Fix the paths for Leaflet's marker icons to work for backend
+// Delete default path configuration for Leaflet icons
+delete L.Icon.Default.prototype._getIconUrl;
+
+// configure leaflet marker icon paths
+// manually set icon paths point to leaftlet/dist/images files bundled
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: iconRetinaUrl,
+  iconUrl: iconUrl,
+  shadowUrl: shadowUrl,
+});
 
 const PlanJourney = () => {
 
     // state to track selected button
-    const [ currentButton, setCurrentButton ] = useState('Attractions');
+    const [ currentButton, setCurrentButton ] = useState('Select here');
 
-    // initial position of map marker: center of KL
+    const { register, handleSubmit, setValue, watch, formState:{ errors },} = useForm();
+
+    // watch the value of the start_date field
+    const startDate = watch('start_date');
+
+    const [ message, setMessage ] = useState("");
+
+    // initial position of map marker: center of Kuala Lumpur
     const initialPosition = [3.1390, 101.6869];
 
     // state to track depart position(coordinates)
@@ -30,6 +56,49 @@ const PlanJourney = () => {
     // state to track city
     const [ state, setState ] = useState('');
 
+    // check for user authorization to access this page
+    const navigate = useNavigate();
+    useEffect(() => {
+        const getJourneyData = async () => {
+            try{
+                // extract token from user data
+                const user = AuthService.getCurrentUser();
+                const token = user?.token;
+
+                // redirect to login if token missing
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
+                
+                // add authorization token to header
+                const res = await fetch('/api/plan-journey', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+                // handle res
+                if (!res.ok) {
+                    if (res.status === 401  || res.status === 403) {  // JWT expired or invalid
+                        localStorage.removeItem('user');
+                        navigate('/login');  
+                    } else {
+                        const data = await res.json();
+                        console.log(data);
+                    }
+                }
+
+            } catch (err) {
+                console.log("Login authorisation error: ", err);
+            }
+        };
+
+        getJourneyData();
+        
+    }, [navigate]);
+
     // function to calculate distance via Haversine formula
     const calcDistance = (latDep, latDest, lonDep, lonDest) => {
         const R = 6371e3; // metres
@@ -46,14 +115,31 @@ const PlanJourney = () => {
         return (R * c) / 1000; // in km
     }
 
+    // function to handle Save button
+    const handleSave = (data) => {
+        setMessage('');
+        UserService.planJourney(data.departure, data.destination, data.start_date, data.end_date, data.num_people)
+        .then(()=> {
+            alert('Save plan successfully.')
+          })
+          .catch((error) => {
+            console.log(error)
+            const res =
+              (error.response && error.response.data && error.response.data.message) ||
+              error.message ||
+              error.toString();
+    
+            setMessage(res);
+            alert('Save plan failed. Please try again.')
+          });
+
+    }
+
     /**
      * function to handle form submission.
      * @param {} eventObject - object contains details about the event triggered.
      */
-    const handleFormSubmission = async(eventObject) => {
-
-        // prevent reloading the page upon submission
-        eventObject.preventDefault();
+    const handlePlanJourney = async(eventObject) => {
 
         // fetch coordinates from Nominatim API
         try{
@@ -118,6 +204,14 @@ const PlanJourney = () => {
         }catch (error) {
             console.log(`getCity error: ${error}`);
             alert("Failed to fetch city location. Please try again.")
+        }
+    }
+
+    const onSubmit = (data) => {
+        if (data.action === 'planJourney') {
+            handlePlanJourney(data);
+        } else if (data.action === 'save') {
+            handleSave(data);
         }
     }
 
@@ -231,12 +325,15 @@ const PlanJourney = () => {
             <div className='grid grid-cols-1 md:grid-cols-2 p-6 mb-5'>
                 {/* planning journey form */}
                 <div className='w-1/2 lg:h-[600px] mx-auto bg-white bg-opacity-90 rounded-xl p-8 mt-5 '>
-                    <form onSubmit={handleFormSubmission} className='flex flex-col gap-4'>
+                    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
                         <div className='flex flex-col gap-2'>
                             <label htmlFor="from" className='text-sm text-gray-500 font-semibold'>
                                 From
                             </label>
-                            <input type="text" value={departure} onChange={(eventObj) => setDeparture(eventObj.target.value)} id='from' placeholder='Enter your location' className='border border-gray-200 p-2 rounded-lg'/>
+                            <input {...register('departure', 
+                            { required: 'This field is required.'})}  
+                            type="text" value={departure} onChange={(eventObj) => setDeparture(eventObj.target.value)} id='from' placeholder='Enter your location' className='border border-gray-200 p-2 rounded-lg'/>
+                            {errors.departure && <p className='text-sm text-red-800'>*{errors.departure.message}</p>}
                         </div>
 
                         <div className='flex flex-col gap-2'>
@@ -244,37 +341,65 @@ const PlanJourney = () => {
                             <label htmlFor="to" className='text-sm text-gray-500 font-semibold'>
                                 To
                             </label>
-                            <input type="text" value={destination} onChange={(eventObj) => setDestination(eventObj.target.value)} id='to' placeholder='Enter your destination (i.e. Kuala Lumpur)' className='border border-gray-200 p-2 rounded-lg'/>
+                            <input {...register('destination', 
+                            { required: 'This field is required.'})} 
+                            type="text" value={destination} onChange={(eventObj) => setDestination(eventObj.target.value)} id='to' placeholder='Enter your destination (i.e. Kuala Lumpur)' className='border border-gray-200 p-2 rounded-lg'/>
+                            {errors.destination && <p className='text-sm text-red-800'>*{errors.destination.message}</p>}
                         </div>
 
                         <div className='flex flex-col gap-2'>
-                            <label htmlFor="startDate" className='text-sm text-gray-500 font-semibold'>
+                            <label htmlFor="start_date" className='text-sm text-gray-500 font-semibold'>
                                  Start Date
                             </label>
-                            <input type="date" id='startDate' placeholder='Enter your date' className='border border-gray-200 p-2 rounded-lg'/>
+                            <input {...register('start_date', 
+                            { required: 'This field is required.'})} 
+                            type="date" id='start_date' placeholder='Enter your date' className='border border-gray-200 p-2 rounded-lg'/>
+                            {errors.start_date && <p className='text-sm text-red-800'>*{errors.start_date.message}</p>}
                         </div>
 
                         <div className='flex flex-col gap-2'>
-                            <label htmlFor="endDate" className='text-sm text-gray-500 font-semibold'>
+                            <label htmlFor="end_date" className='text-sm text-gray-500 font-semibold'>
                                  End Date
                             </label>
-                            <input type="date" id='endDate' placeholder='Enter your date' className='border border-gray-200 p-2 rounded-lg'/>
+                            <input {...register('end_date', 
+                            { required: 'This field is required.',
+                                validate: (value) => // end date must be later or on the same day of start date
+                                    !startDate || value >= startDate || 'End date must be after/equal to start date.',
+                            })} 
+                            type="date" id='end_date' placeholder='Enter your date' className='border border-gray-200 p-2 rounded-lg'/>
+                            {errors.end_date && <p className='text-sm text-red-800'>*{errors.end_date.message}</p>}
                         </div>
 
                         <div className='flex flex-col gap-2'>
-                            <label htmlFor="people" className='text-sm text-gray-500 font-semibold'>
+                            <label htmlFor="num_people" className='text-sm text-gray-500 font-semibold'>
                                 Number of people
                             </label>
-                            <input type="number" id='people' placeholder='Enter number of people' className='border border-gray-200 p-2 rounded-lg'/>
+                            <input {...register('num_people', 
+                            { required: 'This field is required.'})} 
+                            type="number" id='num_people' placeholder='Enter number of people' className='border border-gray-200 p-2 rounded-lg'/>
+                            {errors.num_people && <p className='text-sm text-red-800'>*{errors.num_people.message}</p>}
                         </div>
+                        
+                        {/* hidden field to track action */}
+                        <input type='hidden' {...register('action')}/>
+                            <button type='submit' 
+                            onClick={() => setValue('action', 'planJourney')} className='bg-blue-500 text-white px-8 py-3 rounded-full hover:bg-blue-700'>
+                                Plan Journey
+                            </button>
 
-                        <button type='submit' className='bg-blue-500 text-white px-8 py-3 rounded-full hover:bg-blue-700'>
-                            Plan Journey
-                        </button>
+                            <button type='submit' 
+                            onClick={() => setValue('action', 'save')} className='bg-blue-500 text-white px-8 py-3 rounded-full hover:bg-blue-700'>
+                                Save
+                            </button>
 
-                        <button type='submit' className='bg-blue-500 text-white px-8 py-3 rounded-full hover:bg-blue-700'>
-                            Save
-                        </button>
+                        {/* show error message upon failed submission */}
+                        {message && (
+                        <div className="form-group">
+                            <div className="alert alert-danger" role="alert">
+                            {message}
+                            </div>
+                        </div>
+                        )}
 
                     </form>
                 </div>

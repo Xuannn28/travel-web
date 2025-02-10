@@ -8,10 +8,12 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import PlanJourney from './components/PlanJourney'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
+import 'leaflet/dist/leaflet.css';
+import Profile from './components/Profile';
 
 const App = () => {
-
-
   return (
     <Router>
       <div className='w-full overflow-hidden'>
@@ -32,6 +34,9 @@ const App = () => {
           
           {/* Route for plan journey button on destination page */}
           <Route path='/plan-journey' element={<PlanJourney/>} />
+          <Route path='/profile' element={<Profile/>} />
+          <Route path='/login' element={<Login/>} />
+          <Route path='/sign-up' element={<SignUp/>}/>
         </Routes>
         <Footer/>
       </div>
