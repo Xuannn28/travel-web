@@ -18,6 +18,8 @@ import facebook from './facebook.png';
 import instagram from './instagram.jpg';
 import twitter from './twitter.jpg';
 import youtube from './youtube.jpg';
+import google from './google.png';
+import profile_menu from './profile_menu.jpg'
 
 export const assets = {
     logo,
@@ -39,7 +41,9 @@ export const assets = {
     facebook,
     instagram,
     twitter,
-    youtube
+    youtube,
+    google,
+    profile_menu
 
 };
 
