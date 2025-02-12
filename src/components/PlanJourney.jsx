@@ -31,7 +31,7 @@ const PlanJourney = () => {
     // state to track selected button
     const [ currentButton, setCurrentButton ] = useState('Select here');
 
-    const { register, handleSubmit, setValue, watch, formState:{ errors },} = useForm();
+    const { register, handleSubmit, setValue, watch, formState:{ errors }} = useForm();
 
     // watch the value of the start_date field
     const startDate = watch('start_date');
@@ -159,6 +159,7 @@ const PlanJourney = () => {
                 // validation check: destination is within Malaysia
                 const { display_name } = dataDestination[0]
                 if (display_name.includes('Malaysia')){
+                    
                     // use first result of data (result returned are sorted by relevance by default)
                     const { lat:latDep, lon:lonDep } = dataDeparture[0];
                     const { lat:latDest, lon:lonDest } = dataDestination[0];
@@ -198,12 +199,12 @@ const PlanJourney = () => {
                 const state = data.address.state;
                 setState(state);
             } else {
-                alert('City of the destination is not found. Please be more specific.')
+                alert('State of the destination is not found. Please be more specific.')
             }
 
         }catch (error) {
-            console.log(`getCity error: ${error}`);
-            alert("Failed to fetch city location. Please try again.")
+            console.log(`getState error: ${error}`);
+            alert("Failed to fetch state location. Please try again.")
         }
     }
 
@@ -380,7 +381,7 @@ const PlanJourney = () => {
                             {errors.num_people && <p className='text-sm text-red-800'>*{errors.num_people.message}</p>}
                         </div>
                         
-                        {/* hidden field to track action */}
+                        {/* hidden field to track actions: plan journey or save plan */}
                         <input type='hidden' {...register('action')}/>
                             <button type='submit' 
                             onClick={() => setValue('action', 'planJourney')} className='bg-blue-500 text-white px-8 py-3 rounded-full hover:bg-blue-700'>

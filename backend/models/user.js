@@ -18,6 +18,11 @@ const userScheme = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Trip'
     }],
+
+    reviews: [{  // an array of reviews references (IDs)
+        type: mongoose.Schema.ObjectId,
+        ref: 'Review'
+    }],
     
 });
 

@@ -36,7 +36,7 @@ const tripSchema = new mongoose.Schema({
         required: [true, 'Number of people is required']
     },
 
-    user: [{  // an array of saved trip references (IDs)
+    user: [{  // an array of users references (IDs)
         type: mongoose.Schema.ObjectId,
         ref: 'User'
     }],

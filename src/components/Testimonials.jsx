@@ -1,8 +1,20 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 import { motion } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 
 const Testimonials = () => {
+
+    const navigate = useNavigate();
+
+    // function to handle leave a review button
+    const handleLeaveReview = () => {
+        navigate('/make-review');
+        window.scrollTo({
+            top: 0
+        });
+    };
+
   return (
     <div className='w-full min-h-screen bg-gradient-to-b from-slate-700 to-slate-600 text-white mx-auto py-20' id='Testimonials'>
 
@@ -47,9 +59,9 @@ const Testimonials = () => {
         
         {/* buttons */}
         <div className='flex flex-col mt-16 sm:flex-row gap-4 justify-center items-center'>
-                <a href='#Feedback' className='border border-white text-white px-8 py-3 rounded-full hover:bg-slate-100 hover:text-slate-700'>
+                <button onClick={handleLeaveReview} className='border border-white text-white px-8 py-3 rounded-full hover:bg-slate-100 hover:text-slate-700'>
                     Leave a Review
-                </a>
+                </button>
 
                 <a href='#MoreFeedback' className='border border-white text-white px-8 py-3 rounded-full hover:bg-slate-100 hover:text-slate-700'>
                     View more

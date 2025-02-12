@@ -23,6 +23,7 @@ const authToken = (req, res, next) => {
         // attach user info to req
         req.user = user;
 
+        console.log('Authorized by authToken');
         next();
 
     } catch (err) {

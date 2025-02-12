@@ -2,6 +2,7 @@ import express from 'express';
 import User from '../models/user.js';
 import authToken from '../middleware/authMiddleware.js';
 import Trip from '../models/saved_trip.js';
+import Review from '../models/review.js';
 
 const userRouter = express.Router();
 
@@ -39,7 +40,7 @@ userRouter.get('/profile', authToken, async (req, res) => {
         const userId = req.user.id;
 
         // find user by mongoose id
-        const user = await User.findById(userId).populate('saved_trip');
+        const user = await User.findById(userId).populate(['saved_trip', 'reviews']);
 
         if (!user) {
             return res.status(404).send({ message: 'User not found '});
@@ -54,7 +55,7 @@ userRouter.get('/profile', authToken, async (req, res) => {
     }
 })
 
-userRouter.delete('/del-plan/:id', async(req, res) => {
+userRouter.delete('/del-plan/:id' ,async(req, res) => {
     try{
         // find trip and delete trip
         const { id } = req.params;
@@ -68,6 +69,50 @@ userRouter.delete('/del-plan/:id', async(req, res) => {
 
     } catch (err) {
         return res.status(500).send({ message: 'Error deleting plan', err});
+    }
+})
+
+userRouter.delete('/del-review/:id' ,async(req, res) => {
+    try{
+        // find review and delete review
+        const { id } = req.params;
+        const reviewToDelete = await Review.findByIdAndDelete(id);
+
+        if (!reviewToDelete){
+            return res.status(404).send({ message: 'Review to delete not found '});
+        }
+
+        return res.status(200).send({ message: 'Review deleted successfully '});
+
+    } catch (err) {
+        return res.status(500).send({ message: 'Error deleting review', err});
+    }
+})
+
+userRouter.post('/make-review', authToken, async (req, res) => {
+    try{
+        console.log(req.body);
+        const { rating, review } = req.body;
+        
+        // extract JWT sign in id (mongoose id)
+        const user = req.user.id;
+
+        const newReview = new Review({ rating, review, user });
+        await newReview.save();
+
+        // find user by mongoose id and update review field with Review mongoose id
+        const reviewId = newReview._id;
+        await User.findByIdAndUpdate (
+            user,
+            { $push: { reviews: reviewId }},  // push trip id into array
+            { new: true, runValidators: false }  // return updated doc
+        );
+
+        return res.status(201).send({message: 'Making review successfully'});
+
+    } catch (err) {
+        console.log('Error making review', err);
+        return res.status(400).send({message: 'Error making review', err});
     }
 })
 

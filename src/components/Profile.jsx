@@ -29,6 +29,9 @@ const Profile = () => {
   // state to track start date ordering
   const [ sortOrder, setSortOrder ] = useState('asc');
 
+  // state to track review history
+  const [ arrayReview, setArrayReview ] = useState([]);
+
   // function to handle sorting
   const handleSort = () => {
     setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -64,8 +67,17 @@ const Profile = () => {
       })
     }
 
+    // function to navigate to leave review page
+    const handleMakeReview = () => {
+      navigate('/make-review');
+      window.scrollTo({
+        top: 0,
+        behavior:'smooth'
+      })
+    }
+
     // function to handle delete button on saved plans page
-    const handleDelete = async (tripId) => {
+    const handleDeletePlan = async (tripId) => {
       try {
         // delete plan from backend
         await UserService.deletePlan(tripId);
@@ -77,6 +89,74 @@ const Profile = () => {
         console.log('Failed to delete plan: ', err);
       }
     }
+
+    
+    // function to handle delete button on saved plans page
+    const handleDeleteReview = async (reviewId) => {
+      try {
+        // delete plan from backend
+        await UserService.deleteReview(reviewId);
+
+        // update state to remove trip on the frontend
+        setArrayReview(arrayReview.filter(review => review._id !== reviewId ));
+
+      } catch (err) {
+        console.log('Failed to delete review: ', err);
+      }
+    }
+
+    useEffect(() => {
+      const getUserData = async () => {
+          try{
+              // extract token from user data
+              const user = AuthService.getCurrentUser();
+              const token = user?.token;
+
+              // redirect to login if token missing
+              if (!token) {
+                  navigate('/login');
+                  return;
+              }
+              
+              // add authorization token to header
+              const res = await fetch('/api/profile', {
+                  headers: {
+                      'Authorization': `Bearer ${token}`,
+                      'Content-Type': 'application/json',
+                  },
+              });
+              
+              // handle res
+              if (res.ok) {
+
+                // get User object from backend
+                const data = await res.json();
+                console.log('Received data: ', data)
+                const profileName = data.email.split('@')[0];
+                const plans = data.saved_trip || [];
+                const reviews = data.reviews || [];
+ 
+                setEmail(data.email);
+                setUsername(profileName);
+                setNumPlan(plans.length);
+                setArrayPlan(plans);
+                setArrayReview(reviews);
+
+              } else if (!res.ok) {
+                if (res.status === 401  || res.status === 403) {  // JWT expired or invalid
+                  console.log('expired/invalid JWT');
+                  localStorage.removeItem('user');
+                  navigate('/login');  
+                }
+              }
+          } catch (err) {
+              console.log("Login authorisation error: ", err);
+          }
+      };
+
+      getUserData();
+      
+  }, [navigate]);
 
   // function to show content based on respective button
   const content = () => {
@@ -98,7 +178,7 @@ const Profile = () => {
         )
       case 'Saved-Plans': 
         return (
-          <div className=''>
+          <div>
             <div className='text-sm md:text-xl font-semibold justify-center items-center text-center'>
               Saved Plans
             </div>
@@ -140,7 +220,7 @@ const Profile = () => {
                             {trip.num_people}
                           </td>
                           <td scope="row" className="px-6 py-3 font-medium whitespace-nowrap">
-                            <button onClick={() => handleDelete(trip._id)} className='bg-red-800 text-sm p-1 rounded-lg text-white'>D</button>
+                            <button onClick={() => handleDeletePlan(trip._id)} className='bg-red-800 text-sm p-1 rounded-lg text-white'>D</button>
                           </td>
                         </tr>
                       ))
@@ -159,7 +239,49 @@ const Profile = () => {
         );
       case 'Review-History':
         return (
-          <div>Review history</div>
+          <div>
+            <div className='text-sm md:text-xl font-semibold justify-center items-center text-center'>
+              Review History
+            </div>
+
+            {/* table showing trip saved by user */}
+            <div className='w-full overflow-x-auto mt-5 flex justify-center'>  
+              <div className='w-full inline-block'>
+                <table className='w-full text-sm shadow-md sm:rounded-lg overflow-auto'>
+                  <thead className='text-xs uppercase bg-purple-200 text-gray-600'>
+                    <tr>
+                      <th scope='col' className='px-6 py-3'>Rating</th>
+                      <th scope='col' className='px-6 py-3'>Review</th>
+                      <th scope='col' className='px-6 py-3'>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {arrayReview.length > 0 ? (
+                      arrayReview.map((review, index) => (
+                        <tr key={review._id} className='bg-white text-black text-center border-b border-gray-700 '>
+                          <td scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
+                            {review.rating}
+                          </td>
+                          <td scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
+                            {review.review}
+                          </td>
+                          <td scope="row" className="px-6 py-3 font-medium whitespace-nowrap">
+                            <button onClick={() => handleDeleteReview(review._id)} className='bg-red-800 text-sm p-1 rounded-lg text-white'>D</button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" className="text-center py-4 bg-white text-gray-900">No reviews found.</td>
+                      </tr>
+                    )}
+                  
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+          </div>
         );
       default:
         return (
@@ -170,56 +292,7 @@ const Profile = () => {
     }
   }
 
-  useEffect(() => {
-      const getUserData = async () => {
-          try{
-              // extract token from user data
-              const user = AuthService.getCurrentUser();
-              const token = user?.token;
 
-              // redirect to login if token missing
-              if (!token) {
-                  navigate('/login');
-                  return;
-              }
-              
-              // add authorization token to header
-              const res = await fetch('/api/profile', {
-                  headers: {
-                      'Authorization': `Bearer ${token}`,
-                      'Content-Type': 'application/json',
-                  },
-              });
-              
-              // handle res
-              if (res.ok) {
-
-                // get User object from backend
-                const data = await res.json();
-                console.log('Received data: ', data)
-                const profileName = data.email.split('@')[0];
-                const plans = data.saved_trip || [];
-
-                setEmail(data.email);
-                setUsername(profileName);
-                setNumPlan(plans.length);
-                setArrayPlan(plans);
-
-              } else if (!res.ok) {
-                if (res.status === 401  || res.status === 403) {  // JWT expired or invalid
-                  console.log('expired/invalid JWT');
-                  localStorage.removeItem('user');
-                  navigate('/login');  
-                }
-              }
-          } catch (err) {
-              console.log("Login authorisation error: ", err);
-          }
-      };
-
-      getUserData();
-      
-  }, [navigate]);
 
   return (
     <div className='w-full min-h-screen bg-gradient-to-b from-slate-700 to-slate-600 text-white mx-auto' id='Profile'>
@@ -307,7 +380,7 @@ const Profile = () => {
                 <button onClick={handlePlanJourney} className='bg-green-200 border border-green-800 text-green-950 px-2 rounded-full hover:bg-green-300'>
                   Plan Journey
                 </button>
-                <button className='bg-green-200 border border-green-800 text-green-950 px-2 rounded-full hover:bg-green-300'>
+                <button onClick={handleMakeReview} className='bg-green-200 border border-green-800 text-green-950 px-2 rounded-full hover:bg-green-300'>
                   Make Review
                 </button>
               </div>

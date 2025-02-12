@@ -31,7 +31,7 @@ const deletePlan = async (tripId) => {
 
     if (!token) {
         console.log('No token found in localStorage');
-        throw new Error(' User not authenticated');
+        throw new Error('User not authenticated');
     }
 
     return axios.delete(API_URL + `del-plan/${tripId}`, {
@@ -41,9 +41,46 @@ const deletePlan = async (tripId) => {
     });
 };
 
+const deleteReview = async (reviewId) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user?.token;
+
+    if (!token) {
+        console.log('No token found in localStorage');
+        throw new Error('User not authenticated');
+    }
+
+    return axios.delete(API_URL + `del-review/${reviewId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
+const submitReview = (rating, review) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user?.token;
+
+    if (!token) {
+        console.log('No token found in localStorage');
+        throw new Error('User not authenticated');
+    }
+
+    return axios.post(API_URL + '/make-review', {
+        rating, review
+    },
+    {
+        headers:{
+            Authorization: `Bearer ${token}`,
+        },
+    });
+};
+
 const UserService = {
     planJourney,
     deletePlan,
+    submitReview,
+    deleteReview,
 }
 
 export default UserService;

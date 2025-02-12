@@ -10,8 +10,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import PlanJourney from './components/PlanJourney'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
-import 'leaflet/dist/leaflet.css';
 import Profile from './components/Profile';
+import Review from './components/Review'
 
 const App = () => {
   return (
@@ -37,6 +37,7 @@ const App = () => {
           <Route path='/profile' element={<Profile/>} />
           <Route path='/login' element={<Login/>} />
           <Route path='/sign-up' element={<SignUp/>}/>
+          <Route path='/make-review' element={<Review/>} />
         </Routes>
         <Footer/>
       </div>
