@@ -12,9 +12,9 @@ import Login from './components/Login'
 import SignUp from './components/SignUp'
 import Profile from './components/Profile';
 import Review from './components/Review';
-import ForgotPwd from './components/forgotPwd';
 import ResetPwd from './components/ResetPwd'
 import LeaveReset from './components/LeaveReset'
+import ForgotPwd from './components/ForgotPwd'
 
 const App = () => {
   return (

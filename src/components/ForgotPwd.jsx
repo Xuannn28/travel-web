@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
 
-const forgotPwd = () => {
+const ForgotPwd = () => {
 
     const { register, handleSubmit, formState:{ errors },} = useForm();
 
@@ -89,4 +89,4 @@ const forgotPwd = () => {
   )
 }
 
-export default forgotPwd
+export default ForgotPwd
