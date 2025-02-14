@@ -34,7 +34,7 @@ const Login = () => {
       .then(()=> {
 
         navigate('/profile');
-        window.location.reload();
+
         alert('Login successfully.')
       })
 
