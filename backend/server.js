@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import userRouter from './routes/user.routes.js';
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

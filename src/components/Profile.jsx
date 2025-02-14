@@ -119,7 +119,7 @@ const Profile = () => {
               }
               
               // add authorization token to header
-              const res = await fetch('/api/profile', {
+              const res = await fetch(`${process.env.BACKEND_URL}/api/profile`, {
                   headers: {
                       'Authorization': `Bearer ${token}`,
                       'Content-Type': 'application/json',
