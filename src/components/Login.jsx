@@ -3,6 +3,7 @@ import { assets } from '../assets/assets'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   
@@ -15,6 +16,16 @@ const Login = () => {
 
   const handleSignUp = () => {
     navigate('/sign-up')
+  }
+
+  const scrollToTop = () => {
+    window.scrollTo({
+        top: 0
+    })
+  }
+
+  const handleForgotPwd = () => {
+    navigate('/forgot-password')
   }
 
   const handleLogin = (data) => {
@@ -110,7 +121,7 @@ const Login = () => {
                   )}
               </form>
 
-              <button className='text-sm gap-2 p-2 hover:underline hover:text-blue-800'>
+              <button  onClick={handleForgotPwd} className='text-sm gap-2 p-2 hover:underline hover:text-blue-800'>
                 Forgot Password?
               </button>
 
@@ -133,6 +144,10 @@ const Login = () => {
                   </button>
                 </span>
               </p>
+              
+              <Link to='/' onClick={scrollToTop}  className='text-sm gap-2 p-2 hover:underline hover:text-blue-800'>
+                 ⟵ Back to Home Page
+              </Link>
 
             </div>
         </div>

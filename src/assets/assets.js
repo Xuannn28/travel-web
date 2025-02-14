@@ -20,6 +20,7 @@ import twitter from './twitter.jpg';
 import youtube from './youtube.jpg';
 import google from './google.png';
 import profile_menu from './profile_menu.jpg'
+import green_tick from './green_tick.png';
 
 export const assets = {
     logo,
@@ -43,7 +44,8 @@ export const assets = {
     twitter,
     youtube,
     google,
-    profile_menu
+    profile_menu,
+    green_tick
 
 };
 

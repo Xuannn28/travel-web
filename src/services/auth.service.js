@@ -71,12 +71,21 @@ const getCurrentUser = () => {
     }
 };
 
+const forgotPassword = (email) => {
+    return axios.post(API_authURL + 'forgot-password', { email });
+};
+
+const resetPassword = (id, token, password) => {
+    return axios.post(API_authURL + `reset-password?id=${id}&token=${token}`, { password });
+};
 
 const AuthService = {
     register,
     login,
     logout,
     getCurrentUser,
+    forgotPassword,
+    resetPassword,
 }
 
 export default AuthService;

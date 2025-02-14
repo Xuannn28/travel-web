@@ -11,7 +11,10 @@ import PlanJourney from './components/PlanJourney'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import Profile from './components/Profile';
-import Review from './components/Review'
+import Review from './components/Review';
+import ForgotPwd from './components/forgotPwd';
+import ResetPwd from './components/ResetPwd'
+import LeaveReset from './components/LeaveReset'
 
 const App = () => {
   return (
@@ -38,6 +41,9 @@ const App = () => {
           <Route path='/login' element={<Login/>} />
           <Route path='/sign-up' element={<SignUp/>}/>
           <Route path='/make-review' element={<Review/>} />
+          <Route path='/forgot-password' element={<ForgotPwd/>} />
+          <Route path='/reset-password' element={<ResetPwd/>} />
+          <Route path='/leave-reset' element={<LeaveReset/>} />
         </Routes>
         <Footer/>
       </div>
