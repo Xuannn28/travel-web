@@ -141,6 +141,7 @@ const Profile = () => {
                 setNumPlan(plans.length);
                 setArrayPlan(plans);
                 setArrayReview(reviews);
+                setNumReview(reviews.length);
 
               } else if (!res.ok) {
                 if (res.status === 401  || res.status === 403) {  // JWT expired or invalid
@@ -168,11 +169,11 @@ const Profile = () => {
               User's Account
             </div>
 
-            <ul className=' flex flex-col mt-5 font-semibold pl-6 space-y-4 text-sm md:text-lg'>
-              <li>Username: {username} </li>
-              <li>Email: {email} </li>
-              <li>No. of Saved Plans: {numPlan} </li>
-              <li>No. of Review History: {numReview} </li>
+            <ul className=' flex flex-col mt-5 pl-6 space-y-4 text-sm md:text-lg'>
+              <li className='font-semibold'>Username: <span className='text-slate-300'> {username}</span> </li>
+              <li className='font-semibold'>Email: <span className='text-slate-300'> {email}</span> </li>
+              <li className='font-semibold'>No. of Saved Plans: <span className='text-slate-300'> {numPlan}</span> </li>
+              <li className='font-semibold'>No. of Review History: <span className='text-slate-300'> {numReview}</span> </li>
             </ul>
           </div>
         )

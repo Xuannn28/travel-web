@@ -100,13 +100,6 @@ const Login = () => {
                   {errors.password && <p className='text-sm text-red-800'>*{errors.password.message}</p>}
                 </div>
 
-                <div className='gap-2 mt-2'>
-                  <input type="checkbox" id='remember' className=' text-black p-2 rounded-lg'/>
-                  <label htmlFor="remember" className='text-sm font-semibold'>
-                    Remember Me
-                  </label>      
-                </div>
-
                 <button type='submit' className='bg-blue-500 text-white px-5 py-2 rounded-full hover:bg-blue-700'>
                     Login
                 </button>
@@ -125,16 +118,12 @@ const Login = () => {
                 Forgot Password?
               </button>
 
-              <p className='text-md text-center'>
-                or
-              </p>
-
-              <div className='flex flex-col p-2'>
+              {/* <div className='flex flex-col p-2'>
                 <button type='submit' className='bg-white justify-center items-center px-5 py-2 rounded-full border border-black hover:bg-slate-200 flex'>
                   <img src={assets.google} alt='google icon' width={30} className='object-contain mr-2'/> 
                   <span>Continue with Google</span>
                 </button>
-              </div>
+              </div> */}
 
               <p className='text-sm p-2'>
                 Need an account?

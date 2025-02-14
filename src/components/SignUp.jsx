@@ -100,16 +100,12 @@ const SignUp = () => {
 
               </form>
 
-              <p className='text-md text-center'>
-                or
-              </p>
-
-              <div className='flex flex-col p-2'>
+              {/* <div className='flex flex-col p-2'>
                 <button type='submit' className='bg-white justify-center items-center px-5 py-2 rounded-full border border-black hover:bg-slate-200 flex'>
                   <img src={assets.google} alt='google icon' width={30} className='object-contain mr-2'/> 
                   <span>Continue with Google</span>
                 </button>
-              </div>
+              </div> */}
 
               <p className='text-sm p-2'>
                 Already a user?
