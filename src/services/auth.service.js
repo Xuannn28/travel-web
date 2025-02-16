@@ -6,7 +6,7 @@
 
 import axios from "axios";
 
-const API_authURL = (process.env.BACKEND_URL || "http://localhost:8080") + "/api/auth/";
+const API_authURL = (import.meta.env.VITE_BACKEND_URL || "http://localhost:8080") + "/api/auth/";
 
 /**
  * create a new account with user email and password

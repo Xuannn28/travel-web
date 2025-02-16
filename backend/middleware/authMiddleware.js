@@ -7,6 +7,7 @@ dotenv.config();
 
 const authToken = (req, res, next) => {
     // extract token from Authorization header
+    console.log("Authorization header:", req.headers.authorization);
     const token = req.headers.authorization?.split(' ')[1];
 
     // token undefined
@@ -19,7 +20,7 @@ const authToken = (req, res, next) => {
 
         // verify token
         const user = jwt.verify(token, process.env.JWT_SECRET );
-        
+        console.log("Decoded token:", user);
         // attach user info to req
         req.user = user;
 

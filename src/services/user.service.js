@@ -4,7 +4,7 @@
 
 import axios from "axios";
 
-const API_URL = 'http://localhost:8080/api/';
+const API_URL = (import.meta.env.VITE_BACKEND_URL || "http://localhost:8080") + "/api/";
 
 const planJourney = (departure, destination, start_date, end_date, num_people) => {
     const user = JSON.parse(localStorage.getItem('user'));
