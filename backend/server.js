@@ -33,8 +33,8 @@ mongoose.connect( process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/auth_db')
         .catch(err => console.log('Mongodb connection error:', err))
 
 // Serve React static files (add checking before serving .existSync())
-if (fs.existsSync(path.resolve(__dirname, '../dist'))) {
-  app.use(express.static(path.resolve(__dirname, '../dist')));
+if (fs.existsSync(path.resolve(__dirname, '../frontend/dist'))) {
+  app.use(express.static(path.resolve(__dirname, '../frontend/dist')));
 }
 
 // Serve Leaflet marker images from node_modules
@@ -51,7 +51,7 @@ app.use('/api/auth', authRouter);
 app.use('/api', userRouter);
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(path.resolve(__dirname, '../dist'), 'index.html'));
+    res.sendFile(path.join(path.resolve(__dirname, '../frontend/dist'), 'index.html'));
 })
 
 app.use((err, req, res, next) => {
