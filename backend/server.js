@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 // middleware
 app.use(cors({
-  origin: 'https://travel-web-frontend-eosin.vercel.app/', // Replace with your frontend URL
+  origin: 'https://travel-web-frontend-eosin.vercel.app', // Replace with your frontend URL
   credentials: true
 }));
 
@@ -54,7 +54,7 @@ app.use('/api/auth', authRouter);
 app.use('/api', userRouter);
 
 app.get('*', (req, res) => {
-  res.redirect('https://travel-web-frontend-eosin.vercel.app/' + req.originalUrl);
+  res.redirect('https://travel-web-frontend-eosin.vercel.app' + req.originalUrl);
 })
 
 app.use((err, req, res, next) => {
