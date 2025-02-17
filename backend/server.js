@@ -18,10 +18,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-// middleware
+// Define allowed frontend origins
+const allowedOrigins = [
+  'https://travel-web-frontend-eosin.vercel.app', // Production frontend URL
+  'https://travel-web-frontend-lmpt8hq4a-xuannn28s-projects.vercel.app', // Preview frontend URL
+];
+
 app.use(cors({
-  origin: 'https://travel-web-frontend-eosin.vercel.app', // Replace with your frontend URL
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for this origin'));
+    }
+  },
+  credentials: true,
 }));
 
 // parse req of content-type - application/json
