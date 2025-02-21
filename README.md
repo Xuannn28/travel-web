@@ -5,23 +5,23 @@ This project is a Malaysia Travel Website built using React (Vite) for the front
 
 ## Features
 ### Main Sections:
-Home
-About Us
-Destinations
-Testimonials
-Contact Us
+- Home
+- About Us
+- Destinations
+- Testimonials
+- Contact Us
 
 ### User Authentication:
-Secure login and sign-up functionality
+- Secure login and sign-up functionality
 
 ### Personalized Features (Requires Authentication):
-Plan Journey: Users can save and manage their planned trips.
-Leave a Review: Users can submit reviews, which are linked to their accounts.
+- Plan Journey: Users can save and manage their planned trips.
+- Leave a Review: Users can submit reviews, which are linked to their accounts.
 
 ### Tech Stack
-Frontend: React (Vite)
-Backend: Node.js, Express.js
-Database: MongoDB (Mongoose)
+- Frontend: React (Vite)
+- Backend: Node.js, Express.js
+- Database: MongoDB (Mongoose)
 
 ### References
 - Open Street Map (OSM) + Leaflet quick setup: https://leafletjs.com/examples/quick-start/ 
